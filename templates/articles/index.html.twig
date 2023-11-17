@@ -4,7 +4,7 @@
     <h1>Liste des articles</h1>
     <ul>
     {% for article in articles %}
-        <li>{{ article.title }}</li>
+        <li><a href="{{ path('articles.show', {'id': article.id}) }}">{{ article.title }}</a></li>
     {% endfor %}
     </ul>
 {% endblock %}
