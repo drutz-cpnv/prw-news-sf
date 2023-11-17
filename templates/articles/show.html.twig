@@ -5,5 +5,10 @@
     <article>
         {{ article.body }}
     </article>
+    <form method="POST" action="{{ path('articles.delete', {id: article.id}) }}">
+        <input type="hidden" name="_token" value="{{ csrf_token('delete'~article.id) }}">
+        <input type="hidden" name="_method" value="DELETE">
+        <button type="submit">Supprimer</button>
+    </form>
 {% endblock %}
 
