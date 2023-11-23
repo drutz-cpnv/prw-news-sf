@@ -29,6 +29,9 @@ class Article
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updated_at = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $archived_at = null;
+
     public function __construct()
     {
         $this->setCreatedAt(new \DateTimeImmutable());
@@ -95,6 +98,18 @@ class Article
     public function setUpdatedAt(?\DateTimeImmutable $updated_at): static
     {
         $this->updated_at = $updated_at;
+
+        return $this;
+    }
+
+    public function getArchivedAt(): ?\DateTimeImmutable
+    {
+        return $this->archived_at;
+    }
+
+    public function setArchivedAt(?\DateTimeImmutable $archived_at): static
+    {
+        $this->archived_at = $archived_at;
 
         return $this;
     }
