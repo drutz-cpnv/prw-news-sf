@@ -19,7 +19,7 @@ class ArticleController extends AbstractController
     public function index(ArticleRepository $repository): Response
     {
         return $this->render('articles/index.html.twig', [
-            'articles' => $repository->findAll()
+            'articles' => $repository->findNotArchived()
         ]);
     }
 
@@ -42,11 +42,10 @@ class ArticleController extends AbstractController
     }
 
     #[Route('/{id}', name: 'delete', methods: ['POST'])]
-    public function delete(Request $request, Article $article, EntityManagerInterface $em): Response
+    public function delete(Request $request, Article $article, ArticleRepository $repository): Response
     {
         if ($this->isCsrfTokenValid('delete'.$article->getId(), $request->request->get('_token'))) {
-            $em->remove($article);
-            $em->flush();
+            $repository->archive($article);
         }
 
         return $this->redirectToRoute('articles.index', [], Response::HTTP_SEE_OTHER);

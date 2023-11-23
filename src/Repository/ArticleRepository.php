@@ -21,6 +21,24 @@ class ArticleRepository extends ServiceEntityRepository
         parent::__construct($registry, Article::class);
     }
 
+    public function archive(Article $article): self
+    {
+        $article->setArchivedAt(new \DateTimeImmutable());
+        $this->getEntityManager()->flush();
+        return $this;
+    }
+
+    /**
+     * @return Article[] Returns an array of Article objects
+     */
+    public function findNotArchived(): array
+    {
+        return $this->createQueryBuilder('a')
+            ->andWhere('a.archived_at IS NULL')
+            ->getQuery()
+            ->getResult();
+    }
+
 //    /**
 //     * @return Article[] Returns an array of Article objects
 //     */
