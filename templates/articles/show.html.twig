@@ -4,6 +4,7 @@
     <h2>{{ article.title }}</h2>
     <article>
         {{ article.body }}
+        <a href="{{ path('articles.edit', {id: article.id}) }}"></a>
     </article>
     <form method="POST" action="{{ path('articles.delete', {id: article.id}) }}">
         <input type="hidden" name="_token" value="{{ csrf_token('delete'~article.id) }}">

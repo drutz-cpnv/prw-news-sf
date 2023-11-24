@@ -1,9 +1,10 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Nouvel article</h1>
+    <h1>Modifier l'article</h1>
     {{ include('articles/form.html.twig', {
         form: form,
-        button: 'Créer'
+        button: 'Modifier'
     }) }}
 {% endblock %}
+

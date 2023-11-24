@@ -41,6 +41,22 @@ class ArticleController extends AbstractController
         ]);
     }
 
+    #[Route("/{id}/edit", name: "edit", methods: ['GET', 'PUT'])]
+    public function edit(Article $article, Request $request, EntityManagerInterface $em): Response
+    {
+        $form = $this->createForm(ArticleForm::class, $article);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->flush();
+            return $this->redirectToRoute('articles.index', status: Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->render('articles/edit.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+
     #[Route('/{id}', name: 'delete', methods: ['POST'])]
     public function delete(Request $request, Article $article, ArticleRepository $repository): Response
     {
