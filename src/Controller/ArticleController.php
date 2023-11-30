@@ -16,10 +16,10 @@ class ArticleController extends AbstractController
 {
 
     #[Route("", name: "index")]
-    public function index(ArticleRepository $repository): Response
+    public function index(ArticleRepository $repository, Request $request): Response
     {
         return $this->render('articles/index.html.twig', [
-            'articles' => $repository->findNotArchived()
+            'articles' => $request->get('archived') ? $repository->findArchived() : $repository->findNotArchived(),
         ]);
     }
 

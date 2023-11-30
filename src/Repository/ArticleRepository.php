@@ -31,6 +31,17 @@ class ArticleRepository extends ServiceEntityRepository
     /**
      * @return Article[] Returns an array of Article objects
      */
+    public function findArchived(): array
+    {
+        return $this->createQueryBuilder('a')
+            ->andWhere('a.archived_at IS NOT NULL')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @return Article[] Returns an array of Article objects
+     */
     public function findNotArchived(): array
     {
         return $this->createQueryBuilder('a')
