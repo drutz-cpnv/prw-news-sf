@@ -14,12 +14,11 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route("/articles", name: "articles.")]
 class ArticleController extends AbstractController
 {
-
     #[Route("", name: "index")]
     public function index(ArticleRepository $repository, Request $request): Response
     {
         return $this->render('articles/index.html.twig', [
-            'articles' => $request->get('archived') ? $repository->findArchived() : $repository->findNotArchived(),
+            'articles' => $request->query->has('archived') ? $repository->findArchived($request->get('search')) : $repository->findNotArchived($request->get('search')),
         ]);
     }
 

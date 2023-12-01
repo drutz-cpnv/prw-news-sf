@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Article;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -31,9 +32,9 @@ class ArticleRepository extends ServiceEntityRepository
     /**
      * @return Article[] Returns an array of Article objects
      */
-    public function findArchived(): array
+    public function findArchived($search = null): array
     {
-        return $this->createQueryBuilder('a')
+        return $this->findSearch($search)
             ->andWhere('a.archived_at IS NOT NULL')
             ->getQuery()
             ->getResult();
@@ -42,13 +43,22 @@ class ArticleRepository extends ServiceEntityRepository
     /**
      * @return Article[] Returns an array of Article objects
      */
-    public function findNotArchived(): array
+    public function findNotArchived($search = null): array
     {
-        return $this->createQueryBuilder('a')
+        return $this->findSearch($search)
             ->andWhere('a.archived_at IS NULL')
             ->getQuery()
             ->getResult();
     }
+
+    public function findSearch($search = null): \Doctrine\ORM\QueryBuilder
+    {
+        $q = $this->createQueryBuilder('a');
+        if (!$search) return $q;
+        return $q->andWhere("a.body LIKE :var")
+            ->setParameter('var', '%'.$search.'%');
+    }
+
 
 //    /**
 //     * @return Article[] Returns an array of Article objects
