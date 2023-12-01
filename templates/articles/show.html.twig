@@ -1,15 +1,32 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h2>{{ article.title }}</h2>
+    <h2>{{ article.title }}
+        <form method="POST" class="d-inline" action="{{ path('articles.delete', {id: article.id}) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('delete'~article.id) }}">
+            <input type="hidden" name="_method" value="DELETE">
+            <button type="submit" class="text-danger btn btn-link">Supprimer</button>
+        </form></h2>
     <article>
         {{ article.body }}
         <a href="{{ path('articles.edit', {id: article.id}) }}"></a>
     </article>
-    <form method="POST" action="{{ path('articles.delete', {id: article.id}) }}">
-        <input type="hidden" name="_token" value="{{ csrf_token('delete'~article.id) }}">
-        <input type="hidden" name="_method" value="DELETE">
-        <button type="submit">Supprimer</button>
-    </form>
+    <hr>
+    <h2>Commentaires</h2>
+    {{ form_start(form) }}
+        <h3>Nouveau commentaire</h3>
+        {{ form_row(form.content) }}
+        <button type="submit" class="btn btn-primary">Ajouter</button>
+    {{ form_end(form) }}
+
+    <h3>Commentaires récents</h3>
+    <div class="col-12">
+        {% for comment in article.comments %}
+            <div class="row">
+                <h4>{{ comment.createdAt | date("d.m.Y H:i") }}</h4>
+                <p>{{ comment.content | nl2br}}</p>
+            </div>
+        {% endfor %}
+    </div>
 {% endblock %}
 

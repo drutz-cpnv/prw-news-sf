@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use App\Entity\Comment;
 use App\Form\ArticleForm;
+use App\Form\CommentType;
 use App\Repository\ArticleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,7 +20,9 @@ class ArticleController extends AbstractController
     public function index(ArticleRepository $repository, Request $request): Response
     {
         return $this->render('articles/index.html.twig', [
-            'articles' => $request->query->has('archived') ? $repository->findArchived($request->get('search')) : $repository->findNotArchived($request->get('search')),
+            'articles' => $request->query->has('archived') ? $repository->findArchived(
+                $request->get('search')
+            ) : $repository->findNotArchived($request->get('search')),
         ]);
     }
 
@@ -56,10 +60,10 @@ class ArticleController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'delete', methods: ['POST'])]
+    #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
     public function delete(Request $request, Article $article, ArticleRepository $repository): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$article->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $article->getId(), $request->request->get('_token'))) {
             $repository->archive($article);
         }
 
@@ -67,10 +71,21 @@ class ArticleController extends AbstractController
     }
 
     #[Route("/{id}", name: "show")]
-    public function show(Article $article): Response
+    public function show(Article $article, Request $request, EntityManagerInterface $em): Response
     {
+        $comment = (new Comment())->setCreatedAt(new \DateTimeImmutable())->setArticle($article);
+        $form = $this->createForm(CommentType::class, $comment);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->persist($comment);
+            $em->flush();
+            return $this->redirectToRoute('articles.show', ['id' => $article->getId()], Response::HTTP_SEE_OTHER);
+        }
+
         return $this->render('articles/show.html.twig', [
-            'article' => $article
+            'article' => $article,
+            'form' => $form->createView(),
         ]);
     }
 
