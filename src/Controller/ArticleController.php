@@ -78,6 +78,7 @@ class ArticleController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if (!$article->getArchivedAt()) throw $this->createAccessDeniedException();
             $em->persist($comment);
             $em->flush();
             return $this->redirectToRoute('articles.show', ['id' => $article->getId()], Response::HTTP_SEE_OTHER);
